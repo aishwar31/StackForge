@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #030303;
+  --surface: #0a0a0a;
+  --border: #1a1a1a;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.5);
+  --accent-purple: #8b5cf6;
+  --accent-pink: #ec4899;
+  --accent-blue: #3b82f6;
+  --text: #ededed;
+  --text-muted: #888888;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --mesh-opacity: 0.4;
+  --mesh-blur: 100px;
+}
+
+.light {
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-glow: rgba(37, 99, 235, 0.2);
+  --accent-purple: #7c3aed;
+  --accent-pink: #db2777;
+  --accent-blue: #2563eb;
+  --text: #0f172a;
+  --text-muted: #475569;
+  --glass-bg: rgba(0, 0, 0, 0.03);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --mesh-opacity: 0.15;
+  --mesh-blur: 80px;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-text font-sans antialiased overflow-x-hidden transition-colors duration-500;
+  }
+
+  ::selection {
+    background-color: var(--primary-glow);
+    color: var(--background);
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-sans tracking-tight;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply backdrop-blur-xl rounded-2xl shadow-2xl transition-all duration-300;
+    background-color: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+  }
+
+  .glass-card-hover {
+    @apply transition-all duration-300;
+  }
+
+  .glass-card-hover:hover, .card:hover {
+    @apply -translate-y-1;
+    box-shadow: 0 0 30px var(--primary-glow);
+    background-color: color-mix(in srgb, var(--glass-bg), white 5%);
+    border-color: color-mix(in srgb, var(--glass-border), white 10%);
+  }
+
+  .btn-primary {
+    @apply relative inline-flex items-center justify-center px-6 py-3 text-sm font-bold transition-all duration-300 
+    bg-text text-background hover:opacity-90 rounded-xl overflow-hidden
+    shadow-[0_4px_20px_rgba(0,0,0,0.1)];
+  }
+
+  .btn-secondary {
+    @apply glass-card inline-flex items-center justify-center px-6 py-3 text-sm font-semibold transition-all duration-300 
+    text-text hover:bg-white/10 rounded-xl;
+  }
+
+  .card {
+    @apply glass-card glass-card-hover;
+  }
+
+  .input-field {
+    @apply flex w-full h-12 px-4 py-2 text-sm border rounded-xl text-text placeholder:text-textMuted 
+    focus:outline-none transition-all;
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--primary-glow);
+      border-color: var(--primary);
+    }
+    background-color: var(--glass-bg);
+    border-color: var(--glass-border);
+  }
+
+  .text-glow {
+    text-shadow: 0 0 20px var(--primary-glow);
+  }
+
+  .bg-mesh {
+    @apply absolute inset-0 -z-10 animate-pulse-slow transition-opacity duration-1000;
+    opacity: var(--mesh-opacity);
+    filter: blur(var(--mesh-blur));
+    background-color: var(--primary-glow);
+    border-color: var(--accent-purple);
+    background: radial-gradient(at 0% 0%, var(--primary) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, var(--accent-purple) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, var(--accent-pink) 0, transparent 50%);
+  }
+
+  .badge-primary {
+    @apply inline-flex items-center gap-2 px-4 py-1.5 text-xs font-bold border rounded-full uppercase tracking-widest transition-colors;
+    background-color: var(--primary-glow);
+    border-color: var(--glass-border);
+    color: var(--primary);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full hover:bg-white/20 transition-colors;
+}
+
+/* Base Layout Container */
+.content-container {
+  @apply max-w-6xl mx-auto px-6 lg:px-12 w-full;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
