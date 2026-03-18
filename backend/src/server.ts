@@ -20,7 +20,7 @@ redisClient.on('error', (err: Error) => console.log('Redis Client Error', err));
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: '*', // Adjust this for production
+    origin: process.env.CORS_ORIGIN || '*',
     methods: ['GET', 'POST'],
   },
 });
@@ -140,8 +140,12 @@ const startServer = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log(`Connected to MongoDB: ${MONGO_URI}`);
-    await redisClient.connect();
-    console.log('Connected to Redis');
+    try {
+      await redisClient.connect();
+      console.log('Connected to Redis');
+    } catch (redisError) {
+      console.warn('Redis connection failed. Continuing without caching features.', redisError);
+    }
     httpServer.listen(PORT, () => {
       console.log(`Server listening on port ${PORT}`);
     });
