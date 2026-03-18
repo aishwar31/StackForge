@@ -4,7 +4,43 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User';
 import { generateTokens, verifyRefreshToken } from '../utils/token';
 
-export const loginAdmin = async (req: Request, res: Response): Promise<void> => {
+export const register = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { name, email, password } = req.body;
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      res.status(400).json({ success: false, message: 'User already exists' });
+      return;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: 'user', // Default role for registration
+    });
+
+    const { accessToken, refreshToken } = generateTokens((user._id as any).toString(), user.role);
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.status(201).json({
+      success: true,
+      data: {
+        user: { id: user._id, name: user.name, email: user.email, role: user.role },
+        accessToken,
+        refreshToken,
+      },
+    });
+  } catch (error) {
+    console.error('Registration Error:', error);
+    res.status(500).json({ success: false, message: 'Server error during registration' });
+  }
+};
+
+export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
@@ -20,22 +56,14 @@ export const loginAdmin = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    // Generate Tokens
     const { accessToken, refreshToken } = generateTokens((user._id as any).toString(), user.role);
-
-    // Save refresh token to user
     user.refreshToken = refreshToken;
     await user.save();
 
     res.status(200).json({
       success: true,
       data: {
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-        },
+        user: { id: user._id, name: user.name, email: user.email, role: user.role },
         accessToken,
         refreshToken,
       },

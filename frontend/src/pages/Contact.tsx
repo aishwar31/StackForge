@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Send, Mail, MapPin, Phone, Linkedin, Github, Twitter } from 'lucide-react';
 import { api } from '../services/api';
+import toast from 'react-hot-toast';
 
 const Contact = () => {
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
@@ -13,10 +14,11 @@ const Contact = () => {
     setLoading(true);
     try {
       await api.post('/contact', formData);
+      toast.success('Message transmitted successfully!');
       setSuccess(true);
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
-      alert('Failed to send message. Please try again.');
+      toast.error('Failed to send message. Please try again.');
     } finally {
       setLoading(false);
     }

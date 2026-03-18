@@ -1,38 +1,14 @@
-import React from 'react';
-import axios from 'axios';
-import { create } from 'zustand';
-
-// Store for Authentication
-interface AuthState {
-  user: any | null;
-  token: string | null;
-  setAuth: (user: any, token: string) => void;
-  logout: () => void;
-}
-
-export const useAuthStore = create<AuthState>((set) => ({
-  user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null,
-  token: localStorage.getItem('token') || null,
-  setAuth: (user, token) => {
-    localStorage.setItem('user', JSON.stringify(user));
-    localStorage.setItem('token', token);
-    set({ user, token });
-  },
-  logout: () => {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-    set({ user: null, token: null });
-  },
-}));
+import axios, { InternalAxiosRequestConfig, AxiosResponse } from 'axios';
+import { useAuthStore } from '../store/useAuthStore';
 
 // API Client
 export const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: (import.meta as any).env.VITE_API_BASE_URL || 'http://localhost:5001/api/v1',
 });
 
 // Request Interceptor to add JWT
-api.interceptors.request.use((config) => {
-  const token = useAuthStore.getState().token;
+api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  const token = useAuthStore.getState().accessToken;
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -41,7 +17,7 @@ api.interceptors.request.use((config) => {
 
 // Response Interceptor for simple error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response: AxiosResponse) => response,
   (error) => {
     if (error.response?.status === 401) {
       useAuthStore.getState().logout();

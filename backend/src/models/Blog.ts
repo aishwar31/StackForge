@@ -12,6 +12,11 @@ export interface IBlog extends Document {
     description: string;
   };
   published: boolean;
+  comments: {
+    user: mongoose.Types.ObjectId;
+    text: string;
+    createdAt: Date;
+  }[];
 }
 
 const BlogSchema: Schema = new Schema(
@@ -27,6 +32,13 @@ const BlogSchema: Schema = new Schema(
       description: { type: String },
     },
     published: { type: Boolean, default: false },
+    comments: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
+      }
+    ],
   },
   { timestamps: true }
 );

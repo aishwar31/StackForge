@@ -9,6 +9,7 @@ import projectRoutes from './routes/project';
 import blogRoutes from './routes/blog';
 import contactRoutes from './routes/contact';
 import analyticsRoutes from './routes/analytics';
+import chatRoutes from './routes/chat';
 import { trackAnalytics } from './middlewares/analytics';
 
 const app = express();
@@ -45,6 +46,7 @@ app.use('/api/v1/projects', projectRoutes);
 app.use('/api/v1/blogs', blogRoutes);
 app.use('/api/v1/contact', contactRoutes);
 app.use('/api/v1/analytics', analyticsRoutes);
+app.use('/api/v1/chat', chatRoutes);
 
 // Global Error Handler
 app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {

@@ -1,13 +1,17 @@
 import React from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Github, Twitter, Linkedin, Sun, Moon } from 'lucide-react';
+import { Github, Twitter, Linkedin, Sun, Moon, LogOut, User as UserIcon } from 'lucide-react';
 import { useThemeStore } from '../store/useThemeStore';
+import { useAuthStore } from '../store/useAuthStore';
 import ParticleBackground from '../components/ParticleBackground';
+import { Toaster } from 'react-hot-toast';
+import RealTimeChat from '../components/RealTimeChat';
 
 const MainLayout = () => {
   const location = useLocation();
   const { theme, toggleTheme } = useThemeStore();
+  const { user, logout } = useAuthStore();
 
   React.useEffect(() => {
     const root = window.document.documentElement;
@@ -25,6 +29,21 @@ const MainLayout = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative bg-background">
+      <Toaster 
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: theme === 'dark' ? '#1e293b' : '#ffffff',
+            color: theme === 'dark' ? '#f8fafc' : '#0f172a',
+            border: theme === 'dark' ? '1px solid rgba(255,255,255,0.1)' : '1px solid rgba(0,0,0,0.05)',
+            backdropFilter: 'blur(8px)',
+            fontSize: '14px',
+            fontWeight: '600',
+            borderRadius: '12px',
+          },
+        }}
+      />
+      <RealTimeChat />
       <ParticleBackground />
       {/* Mesh Background */}
       <div className="bg-mesh" />
@@ -68,9 +87,31 @@ const MainLayout = () => {
              >
                {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
              </button>
-             <Link to="/contact" className="btn-primary py-2 px-5 text-xs rounded-full">
-                Let's Talk
-             </Link>
+
+             {user ? (
+               <div className="flex items-center gap-3 pl-3 border-l border-white/10">
+                 <div className="flex flex-col items-end hidden sm:flex">
+                   <span className="text-[10px] font-black uppercase tracking-widest text-primary leading-none mb-1">Authenticated</span>
+                   <span className="text-xs font-bold text-white">{user.name}</span>
+                 </div>
+                 <button 
+                   onClick={logout}
+                   className="p-2.5 rounded-xl glass-card border-white/10 hover:bg-white/10 transition-all text-text group"
+                   title="Logout"
+                 >
+                   <LogOut size={18} className="transition-transform group-hover:translate-x-0.5" />
+                 </button>
+               </div>
+             ) : (
+               <div className="flex items-center gap-2">
+                 <Link to="/login" className="text-xs font-bold text-textMuted hover:text-white transition-colors px-3">
+                   Login
+                 </Link>
+                 <Link to="/register" className="btn-primary py-2 px-5 text-xs rounded-full">
+                   Join Forge
+                 </Link>
+               </div>
+             )}
           </div>
         </div>
       </nav>

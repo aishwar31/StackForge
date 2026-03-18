@@ -10,8 +10,12 @@ import Blog from './pages/Blog';
 import BlogDetail from './pages/BlogDetail';
 import Contact from './pages/Contact';
 import AdminDashboard from './pages/AdminDashboard';
-
-const Login = () => <div className="p-8 flex items-center justify-center min-h-screen"><h1 className="text-3xl font-bold">Admin Login</h1></div>;
+import AdminProjects from './pages/AdminProjects';
+import AdminBlogs from './pages/AdminBlogs';
+import AdminMessages from './pages/AdminMessages';
+import AdminSupport from './pages/AdminSupport';
+import Login from './pages/Login';
+import Register from './pages/Register';
 
 const App = () => {
   return (
@@ -30,10 +34,13 @@ const App = () => {
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
-          {/* add more admin routes later */}
+          <Route path="projects" element={<AdminProjects />} />
+          <Route path="blogs" element={<AdminBlogs />} />
+          <Route path="support" element={<AdminSupport />} />
+          <Route path="messages" element={<AdminMessages />} />
         </Route>
         <Route path="/login" element={<Login />} />
-        
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );
