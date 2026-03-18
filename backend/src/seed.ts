@@ -50,9 +50,13 @@ const seedDB = async () => {
     await mongoose.connect(MONGO_URI);
     console.log('Connected to MongoDB!');
 
-    console.log('Connecting to Redis...');
-    await redisClient.connect();
-    console.log('Connected to Redis!');
+    try {
+      console.log('Connecting to Redis...');
+      await redisClient.connect();
+      console.log('Connected to Redis!');
+    } catch (redisError) {
+      console.warn('Redis connection skipped or failed.');
+    }
 
     // Projects
     console.log('Seeding projects...');
